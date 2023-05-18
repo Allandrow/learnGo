@@ -1,38 +1,58 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 func main()  {
 	const totalTickets uint16 = 100
 	
 	var conferenceName string
 	var remainingTickets uint16 = totalTickets
-	var userName string
+	var firstName string
+	var lastName string
 	var userEmail string
 	var userTickets uint16
 	var plannedUsers []string
 
 	fmt.Println("Hello and welcome to the conference ticket booking application")
-	fmt.Println("Which conference do you wish to buy tickets for?")
-	fmt.Scan(&conferenceName)
-	fmt.Printf(
-		"%v has %v remaining tickets out of %v. How many do you wish to buy?\n",
-		conferenceName,
-		remainingTickets,
-		totalTickets,
-	)
-	fmt.Scan(&userTickets)
-	fmt.Printf("Great, we will put %v tickets aside for you. We will now need some basic information to reserve your tickets. What is your name?\n", userTickets)
-	fmt.Scan(&userName)
-	fmt.Printf("Nice to meet you %v, could you give us your email adress as well?\n", userName)
-	fmt.Scan(&userEmail)
-	fmt.Printf("All good %v! Your %v tickets are reserved for the %v conference under your name.\n", userName, userTickets, conferenceName)
-	fmt.Printf("You will get a confirmation email sent to %v shortly.\n", userEmail)
-	fmt.Println("Thanks you for using this app!")
 
-	plannedUsers = append(plannedUsers, userName)
+	for {
+		fmt.Println("Which conference do you wish to buy tickets for?")
+		fmt.Scan(&conferenceName)
+		fmt.Printf(
+			"%v has %v remaining tickets out of %v. How many do you wish to buy?\n",
+			conferenceName,
+			remainingTickets,
+			totalTickets,
+		)
+		fmt.Scan(&userTickets)
+		fmt.Printf("Great, we will put %v tickets aside for you.\n", userTickets)
+		fmt.Println("We will now need some basic information to reserve your tickets. What is your first name?")
+		fmt.Scan(&firstName)
+		fmt.Println("And your last name ?")
+		fmt.Scan(&lastName)
+		fmt.Printf("Nice to meet you %v %v, could you give us your email adress as well?\n", firstName, lastName)
+		fmt.Scan(&userEmail)
+		fmt.Printf("All good %v! Your %v tickets are reserved for the %v conference under your name.\n", firstName, userTickets, conferenceName)
+		fmt.Printf("You will get a confirmation email sent to %v shortly.\n", userEmail)
+		fmt.Println("Thanks you for using this app!")
+	
+		plannedUsers = append(plannedUsers, firstName + " " + lastName)
+	
+		remainingTickets -= userTickets
+		fmt.Printf("The %v now has %v tickets still available.\n", conferenceName, remainingTickets)
 
-	remainingTickets -= userTickets
-	fmt.Printf("The %v now has %v tickets still available.\n", conferenceName, remainingTickets)
-	fmt.Printf("List of people coming to %v: %v\n", conferenceName, plannedUsers)
+		conferenceGoers := []string{}
+
+		for _, plannedUser := range plannedUsers {
+			var names = strings.Fields(plannedUser)
+			initial := names[1][0:1]
+			fmt.Println(initial)
+			conferenceGoers = append(conferenceGoers, names[0] + " " + strings.ToUpper(initial) + ".")
+		}
+
+		fmt.Printf("List of people coming to %v: %v\n\n", conferenceName, conferenceGoers)
+	}
 }
