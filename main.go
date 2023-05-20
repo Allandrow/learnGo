@@ -7,13 +7,13 @@ import (
 
 func main()  {
 	const totalTickets = 100
-	
 	var remainingTickets int16 = totalTickets
 	var plannedUsers []string
+	var userTickets int16 = 0
 
 	fmt.Println("Hello and welcome to the conference ticket booking application")
 
-	conferenceName := getConferenceName()
+	conferenceName := getValidatedName("conference")
 
 	for remainingTickets > 0 {
 		fmt.Printf(
@@ -23,60 +23,39 @@ func main()  {
 			totalTickets,
 		)
 
-		userTickets := handleTicketReservation(&remainingTickets)
-		userName := getName()
-		firstName := strings.Fields(userName)[0]
+		userTickets = handleTicketReservation(remainingTickets)
+		remainingTickets -= userTickets
+
+		firstName := getValidatedName("first")
+		lastName := getValidatedName("last")
 		userEmail := getValidatedEmail(firstName)		
 		
 		fmt.Printf("All good %v! Your %v tickets are reserved for the %v conference under your name.\n", firstName, userTickets, conferenceName)
 		fmt.Printf("You will get a confirmation email sent to %v shortly.\n", userEmail)
 		fmt.Println("Thanks you for using this app!")
 	
-		plannedUsers = append(plannedUsers, userName)
+		plannedUsers = append(plannedUsers, firstName + " " + lastName)
 	
 		fmt.Printf("The %v now has %v tickets still available.\n", conferenceName, remainingTickets)
 
-		conferenceGoers := []string{}
-
-		for _, plannedUser := range plannedUsers {
-			var names = strings.Fields(plannedUser)
-			initial := names[1][0:1]
-			conferenceGoers = append(conferenceGoers, names[0] + " " + strings.ToUpper(initial) + ".")
-		}
-
-		fmt.Printf("List of people coming to %v: %v\n\n", conferenceName, conferenceGoers)
+		conferenceAttendees := setConferenceAttendees(plannedUsers)
+		listAttendees(conferenceName, conferenceAttendees)
 	}
 
 	fmt.Printf("%v is fully booked, see you next time!\n", conferenceName)
 }
 
-func getConferenceName() string  {
-	var conferenceName string
-	
-	for !isValidNameLength(conferenceName) {
-		fmt.Println("Which conference do you wish to buy tickets for?")
-		fmt.Scan(&conferenceName)
-
-		if !isValidNameLength(conferenceName) {
-			fmt.Println("Incorrect name, please re-enter")
-		}
-
-	}
-	return conferenceName
-}
-
-func handleTicketReservation(remaining *int16) int16 {
+func handleTicketReservation(remaining int16) int16 {
 	var userTickets int16
-	for !isValidAmount(userTickets, *remaining) {		
+	for !isValidAmount(userTickets, remaining) {		
 		fmt.Scan(&userTickets)
 		
-		if !isValidAmount(userTickets, *remaining) {
+		if !isValidAmount(userTickets, remaining) {
 			fmt.Println("Incorrect amount, please select another amount")
 		}
 	}
 
 	fmt.Printf("Great, we will put %v tickets aside for you.\n", userTickets)
-	*remaining -= userTickets
 
 	return userTickets
 }
@@ -85,21 +64,29 @@ func isValidAmount(value int16, limit int16) bool {
 	return value > 0 && value <= limit
 }
 
-func getName() string {
-	firstName := getValidatedName("first")
-	lastName := getValidatedName("last")
-
-	return firstName + " " + lastName
-} 
-
 func getValidatedName(key string) string {
+	switch key {
+		case "conference":
+			fmt.Println("Which conference do you wish to buy tickets for?")
+		case "first":
+			fmt.Println("We will now need some basic information to reserve your tickets. What is your first name?")
+		case "last":
+			fmt.Println("And your last name?")
+		default:
+			fmt.Println("Something wrong happened")
+		}
+
+	return validateName()
+}
+
+func validateName() string {
 	var name string
+
 	for !isValidNameLength(name) {
-		fmt.Printf("We will now need some basic information to reserve your tickets. What is your %v name?\n", key)
 		fmt.Scan(&name)
 
 		if !isValidNameLength(name) {
-			fmt.Printf("Invalid name, please provide your %v name again\n", key)
+			fmt.Println("Incorrect value, please enter again")
 		}
 	}
 
@@ -127,4 +114,26 @@ func getValidatedEmail(name string) string {
 
 func isValidEmail(email string) bool {
 	return strings.Contains(email, "@")
+}
+
+func concatWithInitials(name []string) string {
+	initial := name[1][0:1]
+	return name[0] + " " + strings.ToUpper(initial) + "."
+}
+
+func setConferenceAttendees(plannedUsers []string) []string {
+	attendees := []string{}
+		for _, plannedUser := range plannedUsers {
+			fullName := strings.Fields(plannedUser)
+			attendees = append(attendees, concatWithInitials(fullName))
+		}
+
+		return attendees
+}
+
+func listAttendees(conference string, attendees []string) {
+	fmt.Printf("List of people coming to %v:\n", conference)
+	for index, attendee := range attendees {
+		fmt.Printf("%v: %v\n", index+1, attendee)
+	}
 }
