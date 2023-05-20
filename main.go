@@ -30,16 +30,10 @@ func main()  {
 		lastName := getValidatedName("last")
 		userEmail := getValidatedEmail(firstName)		
 		
-		fmt.Printf("All good %v! Your %v tickets are reserved for the %v conference under your name.\n", firstName, userTickets, conferenceName)
-		fmt.Printf("You will get a confirmation email sent to %v shortly.\n", userEmail)
-		fmt.Println("Thanks you for using this app!")
+		endValidationMessage(firstName, userTickets, conferenceName, userEmail)
 	
 		plannedUsers = append(plannedUsers, firstName + " " + lastName)
-	
-		fmt.Printf("The %v now has %v tickets still available.\n", conferenceName, remainingTickets)
-
-		conferenceAttendees := setConferenceAttendees(plannedUsers)
-		listAttendees(conferenceName, conferenceAttendees)
+		listAttendees(conferenceName, plannedUsers)
 	}
 
 	fmt.Printf("%v is fully booked, see you next time!\n", conferenceName)
@@ -132,8 +126,16 @@ func setConferenceAttendees(plannedUsers []string) []string {
 }
 
 func listAttendees(conference string, attendees []string) {
+	conferenceAttendees := setConferenceAttendees(attendees)
+
 	fmt.Printf("List of people coming to %v:\n", conference)
-	for index, attendee := range attendees {
+	for index, attendee := range conferenceAttendees {
 		fmt.Printf("%v: %v\n", index+1, attendee)
 	}
+}
+
+func endValidationMessage(name string, tickets int16, conference string, email string) {
+	fmt.Printf("All good %v! Your %v tickets are reserved for the %v conference under your name.\n", name, tickets, conference)
+		fmt.Printf("You will get a confirmation email sent to %v shortly.\n", email)
+		fmt.Println("Thanks you for using this app!")
 }
