@@ -5,81 +5,97 @@ import (
 	"strings"
 )
 
+const totalTickets = 100
+var remainingTickets int16 = totalTickets
+var attendees []string
+
 func main()  {
-	const totalTickets = 100
-	var remainingTickets int16 = totalTickets
-	var plannedUsers []string
-	var userTickets int16 = 0
-
-	fmt.Println("Hello and welcome to the conference ticket booking application")
-
-	conferenceName := getValidatedName("conference")
-
 	for remainingTickets > 0 {
-		fmt.Printf(
-			"%v has %v remaining tickets out of %v. How many do you wish to buy?\n",
-			conferenceName,
-			remainingTickets,
-			totalTickets,
-		)
-
-		userTickets = handleTicketReservation(remainingTickets)
-		remainingTickets -= userTickets
-
-		firstName := getValidatedName("first")
-		lastName := getValidatedName("last")
-		userEmail := getValidatedEmail(firstName)		
-		
-		endValidationMessage(firstName, userTickets, conferenceName, userEmail)
+		greetUser()
 	
-		plannedUsers = append(plannedUsers, firstName + " " + lastName)
-		listAttendees(conferenceName, plannedUsers)
-	}
+		conference, tickets, userName, userEmail := getUserInput()
+	
+		printValidationMessage(conference, tickets, userName, userEmail)
+		attendees = append(attendees, userName)
+		printAttendeeList(conference)
 
-	fmt.Printf("%v is fully booked, see you next time!\n", conferenceName)
+		if remainingTickets == 0 {
+			fmt.Printf("%v is fully booked, see you next time!\n", conference)
+			break
+		}
+	}
 }
 
-func handleTicketReservation(remaining int16) int16 {
-	var userTickets int16
-	for !isValidAmount(userTickets, remaining) {		
-		fmt.Scan(&userTickets)
+func greetUser() {
+	fmt.Println("Hello and welcome to the conference ticket booking application")
+}
+
+func getUserInput() (string, int16, string, string) {
+	conferenceName := getValidatedConferenceName()
+	tickets := getConferenceTickets(conferenceName)
+	userName := getUserName()
+	userEmail := getUserEmail(userName)
+
+	return conferenceName, tickets, userName, userEmail
+}
+
+func getValidatedConferenceName() string {
+	var name string
+	fmt.Println("Which conference do you wish to buy tickets for?")
+	for isValidName(name) {
+		fmt.Scan(&name)
+
+		if !isValidName(name) {
+			fmt.Println("Invalid conference name, retry.")
+		}
+	}
+
+	return name
+}
+
+func getConferenceTickets(conference string) int16 {
+	var tickets int16
+
+	fmt.Printf(
+		"%v has %v remaining tickets out of %v. How many do you wish to buy?\n",
+		conference,
+		remainingTickets,
+		totalTickets,
+	)
+	
+	for !isValidAmount(tickets, remainingTickets) {		
+		fmt.Scan(&tickets)
 		
-		if !isValidAmount(userTickets, remaining) {
+		if !isValidAmount(tickets, remainingTickets) {
 			fmt.Println("Incorrect amount, please select another amount")
 		}
 	}
 
-	fmt.Printf("Great, we will put %v tickets aside for you.\n", userTickets)
+	fmt.Printf("Great, we will put %v tickets aside for you.\n", tickets)
+	remainingTickets -= tickets
 
-	return userTickets
+	return tickets
 }
 
 func isValidAmount(value int16, limit int16) bool {
 	return value > 0 && value <= limit
 }
 
-func getValidatedName(key string) string {
-	switch key {
-		case "conference":
-			fmt.Println("Which conference do you wish to buy tickets for?")
-		case "first":
-			fmt.Println("We will now need some basic information to reserve your tickets. What is your first name?")
-		case "last":
-			fmt.Println("And your last name?")
-		default:
-			fmt.Println("Something wrong happened")
-		}
+func getUserName() string {
+	fmt.Println("We will now need some basic information to reserve your tickets. What is your first name?")
+	firstName := getValidatedName()
+	lastName := getValidatedName()
 
-	return validateName()
+	return firstName + " " + lastName
 }
 
-func validateName() string {
+func getValidatedName() string {
 	var name string
 
-	for !isValidNameLength(name) {
+	for !isValidName(name) {
 		fmt.Scan(&name)
 
-		if !isValidNameLength(name) {
+		if !isValidName(name) {
 			fmt.Println("Incorrect value, please enter again")
 		}
 	}
@@ -87,11 +103,7 @@ func validateName() string {
 	return name
 }
 
-func isValidNameLength(name string) bool {
-	return len(name) > 2
-}
-
-func getValidatedEmail(name string) string {
+func getUserEmail(name string) string {
 	var email string
 	
 	for !isValidEmail(email){
@@ -110,9 +122,23 @@ func isValidEmail(email string) bool {
 	return strings.Contains(email, "@")
 }
 
-func concatWithInitials(name []string) string {
-	initial := name[1][0:1]
-	return name[0] + " " + strings.ToUpper(initial) + "."
+func isValidName(name string) bool {
+	return len(name) > 2
+}
+
+func printValidationMessage(conference string, tickets int16, userName string, email string) {
+	fmt.Printf("All good %v! Your %v tickets are reserved for the %v conference under your name.\n", userName, tickets, conference)
+	fmt.Printf("You will get a confirmation email sent to %v shortly.\n", email)
+	fmt.Println("Thanks you for using this app!")
+}
+
+func printAttendeeList(conference string) {
+	conferenceAttendees := setConferenceAttendees(attendees)
+
+	fmt.Printf("List of people coming to %v:\n", conference)
+	for index, attendee := range conferenceAttendees {
+		fmt.Printf("%v: %v\n", index + 1, attendee)
+	}
 }
 
 func setConferenceAttendees(plannedUsers []string) []string {
@@ -125,17 +151,7 @@ func setConferenceAttendees(plannedUsers []string) []string {
 		return attendees
 }
 
-func listAttendees(conference string, attendees []string) {
-	conferenceAttendees := setConferenceAttendees(attendees)
-
-	fmt.Printf("List of people coming to %v:\n", conference)
-	for index, attendee := range conferenceAttendees {
-		fmt.Printf("%v: %v\n", index+1, attendee)
-	}
-}
-
-func endValidationMessage(name string, tickets int16, conference string, email string) {
-	fmt.Printf("All good %v! Your %v tickets are reserved for the %v conference under your name.\n", name, tickets, conference)
-		fmt.Printf("You will get a confirmation email sent to %v shortly.\n", email)
-		fmt.Println("Thanks you for using this app!")
+func concatWithInitials(name []string) string {
+	initial := name[1][0:1]
+	return name[0] + " " + strings.ToUpper(initial) + "."
 }
