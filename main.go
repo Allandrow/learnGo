@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-// Validate selection, if no city found reiterate prompt
-// If city, display list of attendees and remaining tickets
 // Prompt for desired amount of tickets
 // Validate amount, if above remaining or 0 or below, reiterate prompt
 // substract amount from remaining for new remaining
@@ -20,7 +18,7 @@ func main() {
 	GreetUser()
 
 	conference := getUserConferenceSelection()
-	fmt.Print("Selection is: " + conference)
+	displayConferenceAttendees(conference)
 }
 
 func GreetUser() {
@@ -34,7 +32,7 @@ func GreetUser() {
 	}
 }
 
-func getUserConferenceSelection() string {
+func getUserConferenceSelection() Conference {
 	fmt.Println("Select the conference location you wish to attend:")
 	var selection string
 
@@ -43,11 +41,21 @@ func getUserConferenceSelection() string {
 
 		for _, conference := range conferences {
 			if strings.ToLower(conference.city) == strings.ToLower(selection) {
-				return conference.city
+				return conference
 			}
 		}
 
 		fmt.Println("Incorrect location, please try again")
 	}
+}
 
+func displayConferenceAttendees(conference Conference) {
+	fmt.Printf("There are %v remaining tickets out of %v for the conference located in %v.\n", conference.remainingTickets, conference.totalTickets, conference.city)
+	if len(conference.attendees) == 0 {
+		fmt.Println("There are currently no attendees, be the first!")
+	} else {
+		for index, attendee := range conference.attendees {
+			fmt.Printf("%v: %v with %v tickets", index + 1, attendee.firstName, attendee.tickets)
+		}
+	}
 }
