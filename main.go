@@ -1,6 +1,7 @@
 package main
 
-// Greet user and display list of cities
+import "fmt"
+
 // Prompt for city
 // Validate selection, if no city found reiterate prompt
 // If city, display list of attendees and remaining tickets
@@ -14,5 +15,16 @@ package main
 // Display confirmation and start again.
 
 func main() {
-	
+	GreetUser()
+}
+
+func GreetUser() {
+	fmt.Println("Hello and welcome. Here is the list of available conferences:")
+	var index = 1
+	for _, conference := range Conferences {
+		if conference.remainingTickets > 0 {
+			fmt.Printf("%v: %v\n", index, conference.city)
+			index++
+		}
+	}
 }
