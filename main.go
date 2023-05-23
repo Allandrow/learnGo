@@ -1,8 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-// Prompt for city
 // Validate selection, if no city found reiterate prompt
 // If city, display list of attendees and remaining tickets
 // Prompt for desired amount of tickets
@@ -16,15 +18,36 @@ import "fmt"
 
 func main() {
 	GreetUser()
+
+	conference := getUserConferenceSelection()
+	fmt.Print("Selection is: " + conference)
 }
 
 func GreetUser() {
 	fmt.Println("Hello and welcome. Here is the list of available conferences:")
 	var index = 1
-	for _, conference := range Conferences {
+	for _, conference := range conferences {
 		if conference.remainingTickets > 0 {
 			fmt.Printf("%v: %v\n", index, conference.city)
 			index++
 		}
 	}
+}
+
+func getUserConferenceSelection() string {
+	fmt.Println("Select the conference location you wish to attend:")
+	var selection string
+
+	for {
+		fmt.Scan(&selection)
+
+		for _, conference := range conferences {
+			if strings.ToLower(conference.city) == strings.ToLower(selection) {
+				return conference.city
+			}
+		}
+
+		fmt.Println("Incorrect location, please try again")
+	}
+
 }

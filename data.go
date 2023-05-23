@@ -14,7 +14,7 @@ type Conference struct {
 	attendees []Attendee
 }
 
-var Conferences = []Conference{
+var conferences = []Conference{
 	{
 		city: "Berlin",
 		totalTickets: 50,
