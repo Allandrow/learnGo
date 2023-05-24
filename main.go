@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-// Prompt for firstName and validate
-// Prompt for lastName and validate
 // Prompt for email and validate
 // Add firstName, lastName and email in a struct, append to slice of attendees in city struct
 // Display confirmation and start again.
@@ -18,10 +16,15 @@ func main() {
 
 	conference := getUserConferenceSelection()
 	displayConferenceAttendees(conference)
+	
 	attendee.tickets = getUserTickets(conference.remainingTickets)
-
 	conference.remainingTickets -= attendee.tickets
 	fmt.Printf("%v tickets remaining out of %v\n", conference.remainingTickets, conference.totalTickets)
+
+	fmt.Println("We will need some basic information to complete your reservation:")
+
+	attendee.firstName = getUserFirstName()
+	attendee.lastName = getUserLastName()
 }
 
 func GreetUser() {
@@ -75,10 +78,43 @@ func getUserTickets(remainingTickets int16) int16 {
 		}
 
 		fmt.Println("Incorrect value, please retry.")
-		tickets = 0
 	}
 
 	fmt.Printf("Great, we'll put %v tickets aside for you!\n", tickets)
 
 	return tickets
+}
+
+func getUserFirstName() string {
+	fmt.Println("What is your first name?")
+	var name string
+
+	for {
+		fmt.Scan(&name)
+
+		if isValidName(name) {
+			break
+		}
+
+		fmt.Println("Incorrect value, please try again.")
+	}
+
+	return name
+}
+
+func getUserLastName() string {
+	fmt.Println("What is your last name?")
+	var name string
+
+	for {
+		fmt.Scan(&name)
+
+		if isValidName(name) {
+			break
+		}
+
+		fmt.Println("Incorrect value, please try again.")
+	}
+
+	return name
 }
