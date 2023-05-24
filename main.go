@@ -5,9 +5,6 @@ import (
 	"strings"
 )
 
-// Prompt for desired amount of tickets
-// Validate amount, if above remaining or 0 or below, reiterate prompt
-// substract amount from remaining for new remaining
 // Prompt for firstName and validate
 // Prompt for lastName and validate
 // Prompt for email and validate
@@ -17,8 +14,14 @@ import (
 func main() {
 	GreetUser()
 
+	var attendee = Attendee{}
+
 	conference := getUserConferenceSelection()
 	displayConferenceAttendees(conference)
+	attendee.tickets = getUserTickets(conference.remainingTickets)
+
+	conference.remainingTickets -= attendee.tickets
+	fmt.Printf("%v tickets remaining out of %v\n", conference.remainingTickets, conference.totalTickets)
 }
 
 func GreetUser() {
@@ -58,4 +61,24 @@ func displayConferenceAttendees(conference Conference) {
 			fmt.Printf("%v: %v with %v tickets", index + 1, attendee.firstName, attendee.tickets)
 		}
 	}
+}
+
+func getUserTickets(remainingTickets int16) int16 {
+	fmt.Println("How many tickets do you wish to get?")
+	var tickets int16
+
+	for {
+		fmt.Scan(&tickets)
+
+		if isValidAmount(tickets, remainingTickets) {
+			break
+		}
+
+		fmt.Println("Incorrect value, please retry.")
+		tickets = 0
+	}
+
+	fmt.Printf("Great, we'll put %v tickets aside for you!\n", tickets)
+
+	return tickets
 }
