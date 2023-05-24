@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-// Prompt for email and validate
-// Add firstName, lastName and email in a struct, append to slice of attendees in city struct
 // Display confirmation and start again.
 
 func main() {
@@ -19,12 +17,16 @@ func main() {
 	
 	attendee.tickets = getUserTickets(conference.remainingTickets)
 	conference.remainingTickets -= attendee.tickets
-	fmt.Printf("%v tickets remaining out of %v\n", conference.remainingTickets, conference.totalTickets)
 
 	fmt.Println("We will need some basic information to complete your reservation:")
 
 	attendee.firstName = getUserFirstName()
 	attendee.lastName = getUserLastName()
+	attendee.email = getUserEmail()
+
+	conference.attendees = append(conference.attendees, attendee)
+
+	fmt.Printf("All good %v! %v tickets have been reserved for the conference located in %v.\n", attendee.firstName, attendee.tickets, conference.city)
 }
 
 func GreetUser() {
@@ -117,4 +119,21 @@ func getUserLastName() string {
 	}
 
 	return name
+}
+
+func getUserEmail() string {
+	fmt.Println("What is your email adress?")
+	var email string
+
+	for {
+		fmt.Scan(&email)
+
+		if isValidEmail(email) {
+			break
+		}
+
+		fmt.Println("Incorrect value, please try again.")
+	}
+
+	return email
 }
