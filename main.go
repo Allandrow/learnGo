@@ -13,12 +13,12 @@ func main() {
 
 		var attendee = Attendee{}
 
-		index := getUserConferenceSelection()
+		conference := getUserConferenceSelection()
 	
-		displayConferenceAttendees(conferences[index])
+		displayConferenceAttendees(conference)
 		
-		attendee.tickets = getUserTickets(conferences[index].remainingTickets)
-		conferences[index].remainingTickets -= attendee.tickets
+		attendee.tickets = getUserTickets(conference.remainingTickets)
+		conference.remainingTickets -= attendee.tickets
 	
 		fmt.Println("We will need some basic information to complete your reservation:")
 	
@@ -26,9 +26,9 @@ func main() {
 		attendee.lastName = getUserLastName()
 		attendee.email = getUserEmail()
 	
-		conferences[index].attendees = append(conferences[index].attendees, attendee)
+		conference.attendees = append(conference.attendees, attendee)
 	
-		fmt.Printf("All good %v! %v tickets have been reserved for the conference located in %v.\n", attendee.firstName, attendee.tickets, conferences[index].city)
+		fmt.Printf("All good %v! %v tickets have been reserved for the conference located in %v.\n", attendee.firstName, attendee.tickets, conference.city)
 	}
 
 
@@ -45,7 +45,7 @@ func GreetUser() {
 	}
 }
 
-func getUserConferenceSelection() int {
+func getUserConferenceSelection() *Conference {
 	fmt.Println("Select the conference location you wish to attend:")
 	var selection string
 
@@ -54,7 +54,7 @@ func getUserConferenceSelection() int {
 
 		for index, conference := range conferences {
 			if strings.ToLower(conference.city) == strings.ToLower(selection) {
-				return index
+				return &conferences[index]
 			}
 		}
 
@@ -62,7 +62,7 @@ func getUserConferenceSelection() int {
 	}
 }
 
-func displayConferenceAttendees(conference Conference) {
+func displayConferenceAttendees(conference *Conference) {
 	fmt.Printf("There are %v remaining tickets out of %v for the conference located in %v.\n", conference.remainingTickets, conference.totalTickets, conference.city)
 	if len(conference.attendees) == 0 {
 		fmt.Println("There are currently no attendees, be the first!")
