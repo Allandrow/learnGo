@@ -8,25 +8,30 @@ import (
 // Display confirmation and start again.
 
 func main() {
-	GreetUser()
+	for {
+		GreetUser()
 
-	var attendee = Attendee{}
+		var attendee = Attendee{}
 
-	conference := getUserConferenceSelection()
-	displayConferenceAttendees(conference)
+		index, conference := getUserConferenceSelection()
 	
-	attendee.tickets = getUserTickets(conference.remainingTickets)
-	conference.remainingTickets -= attendee.tickets
+		displayConferenceAttendees(*conference)
+		
+		attendee.tickets = getUserTickets(conference.remainingTickets)
+		conferences[index].remainingTickets -= attendee.tickets
+	
+		fmt.Println("We will need some basic information to complete your reservation:")
+	
+		attendee.firstName = getUserFirstName()
+		attendee.lastName = getUserLastName()
+		attendee.email = getUserEmail()
+	
+		conferences[index].attendees = append(conference.attendees, attendee)
+	
+		fmt.Printf("All good %v! %v tickets have been reserved for the conference located in %v.\n", attendee.firstName, attendee.tickets, conference.city)
+	}
 
-	fmt.Println("We will need some basic information to complete your reservation:")
 
-	attendee.firstName = getUserFirstName()
-	attendee.lastName = getUserLastName()
-	attendee.email = getUserEmail()
-
-	conference.attendees = append(conference.attendees, attendee)
-
-	fmt.Printf("All good %v! %v tickets have been reserved for the conference located in %v.\n", attendee.firstName, attendee.tickets, conference.city)
 }
 
 func GreetUser() {
@@ -40,16 +45,16 @@ func GreetUser() {
 	}
 }
 
-func getUserConferenceSelection() Conference {
+func getUserConferenceSelection() (int, *Conference) {
 	fmt.Println("Select the conference location you wish to attend:")
 	var selection string
 
 	for {
 		fmt.Scan(&selection)
 
-		for _, conference := range conferences {
+		for index, conference := range conferences {
 			if strings.ToLower(conference.city) == strings.ToLower(selection) {
-				return conference
+				return index, &conference
 			}
 		}
 
@@ -63,7 +68,7 @@ func displayConferenceAttendees(conference Conference) {
 		fmt.Println("There are currently no attendees, be the first!")
 	} else {
 		for index, attendee := range conference.attendees {
-			fmt.Printf("%v: %v with %v tickets", index + 1, attendee.firstName, attendee.tickets)
+			fmt.Printf("%v: %v with %v tickets\n", index + 1, attendee.firstName, attendee.tickets)
 		}
 	}
 }
