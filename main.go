@@ -13,11 +13,11 @@ func main() {
 
 		var attendee = Attendee{}
 
-		index, conference := getUserConferenceSelection()
+		index := getUserConferenceSelection()
 	
-		displayConferenceAttendees(*conference)
+		displayConferenceAttendees(conferences[index])
 		
-		attendee.tickets = getUserTickets(conference.remainingTickets)
+		attendee.tickets = getUserTickets(conferences[index].remainingTickets)
 		conferences[index].remainingTickets -= attendee.tickets
 	
 		fmt.Println("We will need some basic information to complete your reservation:")
@@ -26,9 +26,9 @@ func main() {
 		attendee.lastName = getUserLastName()
 		attendee.email = getUserEmail()
 	
-		conferences[index].attendees = append(conference.attendees, attendee)
+		conferences[index].attendees = append(conferences[index].attendees, attendee)
 	
-		fmt.Printf("All good %v! %v tickets have been reserved for the conference located in %v.\n", attendee.firstName, attendee.tickets, conference.city)
+		fmt.Printf("All good %v! %v tickets have been reserved for the conference located in %v.\n", attendee.firstName, attendee.tickets, conferences[index].city)
 	}
 
 
@@ -45,7 +45,7 @@ func GreetUser() {
 	}
 }
 
-func getUserConferenceSelection() (int, *Conference) {
+func getUserConferenceSelection() int {
 	fmt.Println("Select the conference location you wish to attend:")
 	var selection string
 
@@ -54,7 +54,7 @@ func getUserConferenceSelection() (int, *Conference) {
 
 		for index, conference := range conferences {
 			if strings.ToLower(conference.city) == strings.ToLower(selection) {
-				return index, &conference
+				return index
 			}
 		}
 
