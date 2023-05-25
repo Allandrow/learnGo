@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-// Display confirmation and start again.
-
 func main() {
 	for {
 		GreetUser()
@@ -16,6 +14,11 @@ func main() {
 		conference := getUserConferenceSelection()
 	
 		displayConferenceAttendees(conference)
+		
+		if conference.remainingTickets == 0 {
+			fmt.Println("This conference is fully booked, sorry !")
+			continue
+		}
 		
 		attendee.tickets = getUserTickets(conference.remainingTickets)
 		conference.remainingTickets -= attendee.tickets
