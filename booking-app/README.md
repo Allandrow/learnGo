@@ -1,6 +1,6 @@
-# <p align="center">LearnGo</p>
+# <p align="center">Booking-app</p>
 
-LearnGo is a simple CLI application written in Go to learn the basics of the language. It mainly features:
+Booking-app is a simple CLI application written in Go to learn the basics of the language. It mainly features:
 
 - Printing to the console
 - Gathering user input
