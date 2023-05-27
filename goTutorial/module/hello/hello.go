@@ -8,11 +8,14 @@ import (
 )
 
 func main() {
-	message, err := greetings.Hello("Cyril")
+	names := []string{"Cyril", "Nicolas", "Amaury", "Kévin"}
+	messages, err := greetings.Hellos(names)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(message)
+	for _, message := range messages {
+		fmt.Println(message)
+	}
 }
