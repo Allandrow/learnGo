@@ -33,8 +33,6 @@ func main() {
 	
 		fmt.Printf("All good %v! %v tickets have been reserved for the conference located in %v.\n", attendee.firstName, attendee.tickets, conference.city)
 	}
-
-
 }
 
 func GreetUser() {
@@ -61,7 +59,7 @@ func getUserConferenceSelection() *Conference {
 			}
 		}
 
-		fmt.Println("Incorrect location, please try again")
+		printWrongValue()
 	}
 }
 
@@ -87,7 +85,7 @@ func getUserTickets(remainingTickets int16) int16 {
 			break
 		}
 
-		fmt.Println("Incorrect value, please retry.")
+		printWrongValue()
 	}
 
 	fmt.Printf("Great, we'll put %v tickets aside for you!\n", tickets)
@@ -106,7 +104,7 @@ func getUserFirstName() string {
 			break
 		}
 
-		fmt.Println("Incorrect value, please try again.")
+		printWrongValue()
 	}
 
 	return name
@@ -123,7 +121,7 @@ func getUserLastName() string {
 			break
 		}
 
-		fmt.Println("Incorrect value, please try again.")
+		printWrongValue()
 	}
 
 	return name
@@ -140,8 +138,12 @@ func getUserEmail() string {
 			break
 		}
 
-		fmt.Println("Incorrect value, please try again.")
+		printWrongValue()
 	}
 
 	return email
+}
+
+func printWrongValue() {
+	fmt.Println("Incorrect value, please try again.")
 }
