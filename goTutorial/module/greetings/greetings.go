@@ -24,7 +24,7 @@ func Hellos(names []string) (map[string]string, error) {
 			return nil, err
 		}
 
-		messages[name] = message
+			messages[name] = message
 	}
 
 	return messages, nil
