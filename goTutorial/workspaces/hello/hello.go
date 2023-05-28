@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"golang.org/x/example/stringutil"
+	"example.com/utils"
 )
 
 func main() {
-	fmt.Println(stringutil.ToUpper("Hello"))
+	fmt.Println(utils.ToUpper("Hello"))
 }
